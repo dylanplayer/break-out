@@ -11,6 +11,16 @@ const ballRadius = 15;
 let ballXSpeed = 2;
 let ballYSpeed = -2;
 
+// Paddle Variables
+let paddleHeight = 10;
+let paddleWidth = 75;
+let paddleX = (WIDTH - paddleWidth) / 2;
+const paddleY = HEIGHT - 40;
+let paddleSpeed = 7;
+
+// Keyboard Variables
+let rightPressed = false;
+let leftPressed = false;
 
 /**
  * Clears the canvas
@@ -45,11 +55,64 @@ const ballLogic = () => {
 }
 
 /**
+ * Draw Paddle
+ */
+const drawPaddle = () => {
+    ctx.beginPath();
+    ctx.rect(paddleX, paddleY, paddleWidth, paddleHeight);
+    ctx.fillStyle = '#0095DD';
+    ctx.fill();
+    ctx.closePath();
+}
+
+/**
+ * All paddle logic
+ */
+const paddleLogic = () => {
+    if (rightPressed && !(paddleX + paddleWidth / 2 > WIDTH - paddleWidth / 2)) {
+        paddleX += paddleSpeed;
+    } else if (leftPressed && !(paddleX < 0)) {
+        paddleX -= paddleSpeed;
+    }
+}
+
+/**
+ * Handles while a key is pressed
+ * @param event 
+ */
+const keyDownHandler = (event) => {
+    if (event.key == 'Right' || event.key == 'ArrowRight') {
+        rightPressed = true;
+    } else if (event.key == 'Left' || event.key == 'ArrowLeft') {
+        leftPressed = true;
+    }
+}
+
+/**
+ * Handles when a key is unpressed
+ * @param event 
+ */
+const keyUpHandler = (event) => {
+    if (event.key == 'Right' || event.key == 'ArrowRight') {
+        rightPressed = false;
+    } else if (event.key == 'Left' || event.key == 'ArrowLeft') {
+        leftPressed = false;
+    }
+}
+
+document.addEventListener('keydown', keyDownHandler);
+document.addEventListener('keyup', keyUpHandler)
+
+/**
  * Runs every 10 Miliseconds
  */
 const draw = () => {
     clearCanvas();
+    // Draw
     drawBall();
+    drawPaddle();
+    //Logic
     ballLogic();
+    paddleLogic();
 }
 setInterval(draw, 10);
