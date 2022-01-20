@@ -10,6 +10,7 @@ let ballY = HEIGHT - 55;
 const ballRadius = 15;
 let ballXSpeed = 3.5 + Math.random() - 0.5;
 let ballYSpeed = -3.5 + Math.random() - 0.5;
+let ballColor = '#000000';
 
 // Paddle Variables
 let paddleHeight = 10;
@@ -50,7 +51,7 @@ const clearCanvas = () => {
 const drawBall = () => {
     ctx.beginPath();
     ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
-    ctx.fillStyle = '#0095DD';
+    ctx.fillStyle = ballColor;
     ctx.fill();
     ctx.closePath();
 }
