@@ -121,8 +121,19 @@ const keyUpHandler = (event) => {
     }
 }
 
+/**
+ * Handles when the mouse is moved
+ */
+const mouseMoveHandler = (event) => {
+    let mouseX = event.clientX - canvas.offsetLeft;
+    if (mouseX > 0 && mouseX < WIDTH) {
+        paddleX = mouseX - paddleWidth / 2;
+    }
+}
+
 document.addEventListener('keydown', keyDownHandler);
-document.addEventListener('keyup', keyUpHandler)
+document.addEventListener('keyup', keyUpHandler);
+document.addEventListener('mousemove', mouseMoveHandler);
 
 /**
  * Populate bricks list with bricks
