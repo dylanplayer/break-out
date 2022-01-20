@@ -31,6 +31,10 @@ let brickOffsetLeft = 30;
 let rightPressed = false;
 let leftPressed = false;
 
+// Score Variables
+let score = 0;
+let scorePerBrick = 1;
+
 /**
  * Clears the canvas
  */
@@ -165,10 +169,25 @@ const collisionDetection = () => {
                 if (ballX > brick.x && ballX < brick.x + brickWidth && ballY > brick.y && ballY < brick.y + brickHeight) {
                     ballYSpeed *= -1;
                     bricks[i][j].isVisible = false;
+                    score += scorePerBrick;
+                    if (score == brickColumnCount * brickRowCount) {
+                        alert('You win, congrats!');
+                        document.location.reload();
+                        clearInterval(interval);
+                    }
                 }
             }
         }
     }
+}
+
+/**
+ * Draw score on canvas
+ */
+const drawScore = () => {
+    ctx.font = '16px Ariel';
+    ctx.fillStyle = '#0095DD';
+    ctx.fillText('Score: ' + score, 8, 20);
 }
 
 /**
@@ -180,6 +199,7 @@ const draw = () => {
     drawBall();
     drawPaddle();
     drawBricks();
+    drawScore();
     //Logic
     ballLogic();
     paddleLogic();
