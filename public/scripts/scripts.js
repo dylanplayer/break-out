@@ -26,6 +26,7 @@ let brickHeight = 20;
 let brickPadding = 10;
 let brickOffsetTop = 30;
 let brickOffsetLeft = 30;
+let brickInitalRed = 255 / brickColumnCount;
 
 // Keyboard Variables
 let rightPressed = false;
@@ -170,12 +171,14 @@ const drawBricks = () => {
             if (bricks[i][j].isVisible){
                 ctx.beginPath();
                 ctx.rect(bricks[i][j].x, bricks[i][j].y, brickWidth, brickHeight);
-                ctx.fillStyle = '#0095DD';
+                ctx.fillStyle = `rgb(${brickInitalRed}, 0, 0)`;
                 ctx.fill();
                 ctx.closePath();
             }
         }
+        brickInitalRed += 255 / brickColumnCount;
     }
+    brickInitalRed = 255 / brickColumnCount;
 }
 
 /**
