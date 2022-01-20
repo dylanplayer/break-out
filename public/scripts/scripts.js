@@ -6,7 +6,7 @@ const HEIGHT = canvas.height;
 
 // Ball Variables
 let ballX = WIDTH / 2;
-let ballY = HEIGHT - 30
+let ballY = HEIGHT - 55
 const ballRadius = 15;
 let ballXSpeed = 2;
 let ballYSpeed = -2;
@@ -15,7 +15,7 @@ let ballYSpeed = -2;
 let paddleHeight = 10;
 let paddleWidth = 75;
 let paddleX = (WIDTH - paddleWidth) / 2;
-const paddleY = HEIGHT - 40;
+const paddleY = HEIGHT - paddleHeight;
 let paddleSpeed = 7;
 
 // Keyboard Variables
@@ -47,8 +47,16 @@ const ballLogic = () => {
     if (ballX + ballRadius / 2 >= WIDTH - ballRadius / 2 || ballX - ballRadius / 2 <= 0 + ballRadius / 2){
         ballXSpeed *= -1;
     }
-    if (ballY + ballRadius / 2 >= HEIGHT - ballRadius / 2|| ballY - ballRadius / 2 <= 0 + ballRadius / 2){
+    if (ballY - ballRadius / 2 <= 0 + ballRadius / 2){
         ballYSpeed *= -1;
+    } else if (ballY + ballRadius / 2 >= HEIGHT - ballRadius / 2) {
+        if (ballX > paddleX && ballX < paddleX + paddleWidth) {
+            ballYSpeed *= -1;
+        } else {
+            alert('GAME OVER');
+            document.location.reload();
+            clearInterval(interval)
+        }
     }
     ballX += ballXSpeed;
     ballY += ballYSpeed;
@@ -115,4 +123,4 @@ const draw = () => {
     ballLogic();
     paddleLogic();
 }
-setInterval(draw, 10);
+let interval = setInterval(draw, 10);
