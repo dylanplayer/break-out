@@ -18,6 +18,7 @@ let paddleWidth = 75;
 let paddleX = (WIDTH - paddleWidth) / 2;
 const paddleY = HEIGHT - paddleHeight;
 let paddleSpeed = 7;
+let paddleColor = `rgb(${paddleX * (255 / WIDTH)}, 0, 0)`;
 
 // Brick Variables
 let brickRowCount = 3;
@@ -92,7 +93,7 @@ const ballLogic = () => {
 const drawPaddle = () => {
     ctx.beginPath();
     ctx.rect(paddleX, paddleY, paddleWidth, paddleHeight);
-    ctx.fillStyle = '#0095DD';
+    ctx.fillStyle = paddleColor;
     ctx.fill();
     ctx.closePath();
 }
@@ -139,6 +140,7 @@ const mouseMoveHandler = (event) => {
     let mouseX = event.clientX - canvas.offsetLeft;
     if (mouseX > 0 && mouseX < WIDTH) {
         paddleX = mouseX - paddleWidth / 2;
+        paddleColor = `rgb(${paddleX * (255 / WIDTH)}, 0, 0)`;
     }
 }
 
