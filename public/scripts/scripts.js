@@ -35,6 +35,7 @@ let rightPressed = false;
 let leftPressed = false;
 
 // Score Variables
+let textColor = '#000000';
 let score = 0;
 let scorePerBrick = 1;
 let lives = 3;
@@ -211,13 +212,13 @@ const collisionDetection = () => {
  */
 const drawScore = () => {
     ctx.font = '16px Ariel';
-    ctx.fillStyle = '#0095DD';
+    ctx.fillStyle = textColor;
     ctx.fillText('Score: ' + score, 8, 20);
 }
 
 const drawLives = () => {
     ctx.font = '16px Ariel';
-    ctx.fillStyle = '#0095DD';
+    ctx.fillStyle = textColor;
     ctx.fillText('Lives: ' + lives, canvas.width - 65, 20);
 }
 
