@@ -6,10 +6,10 @@ const HEIGHT = canvas.height;
 
 // Ball Variables
 let ballX = WIDTH / 2;
-let ballY = HEIGHT - 55
+let ballY = HEIGHT - 55;
 const ballRadius = 15;
-let ballXSpeed = 2;
-let ballYSpeed = -2;
+let ballXSpeed = 3.5 + Math.random() - 0.5;
+let ballYSpeed = -3.5 + Math.random() - 0.5;
 
 // Paddle Variables
 let paddleHeight = 10;
@@ -34,6 +34,7 @@ let leftPressed = false;
 // Score Variables
 let score = 0;
 let scorePerBrick = 1;
+let lives = 3;
 
 /**
  * Clears the canvas
@@ -66,9 +67,17 @@ const ballLogic = () => {
         if (ballX > paddleX && ballX < paddleX + paddleWidth) {
             ballYSpeed *= -1;
         } else {
-            alert('GAME OVER');
-            document.location.reload();
-            clearInterval(interval)
+            if (lives == 0) {
+                alert('GAME OVER');
+                document.location.reload();
+            } else {
+                ballX = WIDTH / 2;
+                ballY = HEIGHT - 55;
+                ballXSpeed = 3.5 + Math.random() - 0.5;
+                ballYSpeed = -3.5 + Math.random() - 0.5;
+                paddleX = (WIDTH - paddleWidth) / 2;
+                lives -= 1;
+            }
         }
     }
     ballX += ballXSpeed;
@@ -184,7 +193,6 @@ const collisionDetection = () => {
                     if (score == brickColumnCount * brickRowCount) {
                         alert('You win, congrats!');
                         document.location.reload();
-                        clearInterval(interval);
                     }
                 }
             }
@@ -201,6 +209,12 @@ const drawScore = () => {
     ctx.fillText('Score: ' + score, 8, 20);
 }
 
+const drawLives = () => {
+    ctx.font = '16px Ariel';
+    ctx.fillStyle = '#0095DD';
+    ctx.fillText('Lives: ' + lives, canvas.width - 65, 20);
+}
+
 /**
  * Runs every 10 Miliseconds
  */
@@ -211,9 +225,13 @@ const draw = () => {
     drawPaddle();
     drawBricks();
     drawScore();
+    drawLives();
     //Logic
     ballLogic();
     paddleLogic();
     collisionDetection();
+    // Make draw function loop
+    requestAnimationFrame(draw);
 }
-let interval = setInterval(draw, 10);
+
+draw();
