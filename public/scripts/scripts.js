@@ -19,7 +19,6 @@ const paddleY = HEIGHT - paddleHeight;
 let paddleSpeed = 7;
 
 // Brick Variables
-let bricks = [];
 let brickRowCount = 3;
 let brickColumnCount = 5;
 let brickWidth = 75;
@@ -122,20 +121,52 @@ document.addEventListener('keydown', keyDownHandler);
 document.addEventListener('keyup', keyUpHandler)
 
 /**
- * Draws all bricks
+ * Populate bricks list with bricks
  */
-const drawBricks = () => {
+const populateBricks = () => {
+    let bricks = [];
     for (let i = 0; i < brickColumnCount; i++) {
         bricks[i] = [];
         for (let j = 0; j < brickRowCount; j++) {
             const brickX = (i * (brickWidth + brickPadding)) + brickOffsetLeft;
             const brickY = (j * (brickHeight + brickPadding)) + brickOffsetTop;
-            bricks[i][j] = { x: brickX, y: brickY};
-            ctx.beginPath();
-            ctx.rect(brickX, brickY, brickWidth, brickHeight);
-            ctx.fillStyle = '#0095DD';
-            ctx.fill();
-            ctx.closePath();
+            bricks[i][j] = { x: brickX, y: brickY, isVisible: true};
+        }
+    }
+    return bricks;
+}
+let bricks = populateBricks();
+
+/**
+ * Draws all bricks
+ */
+const drawBricks = () => {
+    for (let i = 0; i < brickColumnCount; i++) {
+        for (let j = 0; j < brickRowCount; j++) {
+            if (bricks[i][j].isVisible){
+                ctx.beginPath();
+                ctx.rect(bricks[i][j].x, bricks[i][j].y, brickWidth, brickHeight);
+                ctx.fillStyle = '#0095DD';
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+    }
+}
+
+/**
+ * Detects collisions with bricks
+ */
+const collisionDetection = () => {
+    for (let i = 0; i < bricks.length; i++) {
+        for (let j = 0; j < bricks[i].length; j++) {
+            let brick = bricks[i][j];
+            if (brick.isVisible) {
+                if (ballX > brick.x && ballX < brick.x + brickWidth && ballY > brick.y && ballY < brick.y + brickHeight) {
+                    ballYSpeed *= -1;
+                    bricks[i][j].isVisible = false;
+                }
+            }
         }
     }
 }
@@ -152,5 +183,6 @@ const draw = () => {
     //Logic
     ballLogic();
     paddleLogic();
+    collisionDetection();
 }
 let interval = setInterval(draw, 10);
