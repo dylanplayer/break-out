@@ -18,6 +18,16 @@ let paddleX = (WIDTH - paddleWidth) / 2;
 const paddleY = HEIGHT - paddleHeight;
 let paddleSpeed = 7;
 
+// Brick Variables
+let bricks = [];
+let brickRowCount = 3;
+let brickColumnCount = 5;
+let brickWidth = 75;
+let brickHeight = 20;
+let brickPadding = 10;
+let brickOffsetTop = 30;
+let brickOffsetLeft = 30;
+
 // Keyboard Variables
 let rightPressed = false;
 let leftPressed = false;
@@ -112,6 +122,25 @@ document.addEventListener('keydown', keyDownHandler);
 document.addEventListener('keyup', keyUpHandler)
 
 /**
+ * Draws all bricks
+ */
+const drawBricks = () => {
+    for (let i = 0; i < brickColumnCount; i++) {
+        bricks[i] = [];
+        for (let j = 0; j < brickRowCount; j++) {
+            const brickX = (i * (brickWidth + brickPadding)) + brickOffsetLeft;
+            const brickY = (j * (brickHeight + brickPadding)) + brickOffsetTop;
+            bricks[i][j] = { x: brickX, y: brickY};
+            ctx.beginPath();
+            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+            ctx.fillStyle = '#0095DD';
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+}
+
+/**
  * Runs every 10 Miliseconds
  */
 const draw = () => {
@@ -119,6 +148,7 @@ const draw = () => {
     // Draw
     drawBall();
     drawPaddle();
+    drawBricks();
     //Logic
     ballLogic();
     paddleLogic();
