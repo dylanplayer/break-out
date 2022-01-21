@@ -34,11 +34,11 @@ let brickInitalRed = 255 / brickColumnCount;
 let rightPressed = false;
 let leftPressed = false;
 
-// Score Variables
+// Game Variables
 let textColor = '#000000';
 let score = 0;
 let scorePerBrick = 1;
-let lives = 3;
+let lives = 2;
 
 /**
  * Clears the canvas
@@ -74,13 +74,14 @@ const ballLogic = () => {
             if (lives == 0) {
                 alert('GAME OVER');
                 document.location.reload();
+                cancelAnimationFrame();
             } else {
                 ballX = WIDTH / 2;
                 ballY = HEIGHT - 55;
                 ballXSpeed = 3.5 + Math.random() - 0.5;
                 ballYSpeed = -3.5 + Math.random() - 0.5;
                 paddleX = (WIDTH - paddleWidth) / 2;
-                lives -= 1;
+                lives --;
             }
         }
     }
