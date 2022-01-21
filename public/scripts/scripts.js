@@ -81,7 +81,6 @@ const ballLogic = () => {
                 ballY = HEIGHT - 55;
                 ballXSpeed = 3.5 + Math.random() - 0.5;
                 ballYSpeed = -3.5 + Math.random() - 0.5;
-                paddleX = (WIDTH - paddleWidth) / 2;
                 lives --;
             }
         }
