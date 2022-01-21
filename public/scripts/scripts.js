@@ -39,6 +39,7 @@ let textColor = '#000000';
 let score = 0;
 let scorePerBrick = 1;
 let lives = 2;
+let fps = 80;
 
 /**
  * Clears the canvas
@@ -239,7 +240,9 @@ const draw = () => {
     paddleLogic();
     collisionDetection();
     // Make draw function loop
-    requestAnimationFrame(draw);
+    setTimeout(() => {
+        requestAnimationFrame(draw);
+    }, 1000 / fps);
 }
 
 draw();
