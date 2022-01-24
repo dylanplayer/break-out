@@ -64,26 +64,26 @@ const drawBall = () => {
  * All ball logic
  */
 const ballLogic = () => {
-  if (ballX + ballRadius / 2 >= WIDTH - ballRadius / 2 || ballX - ballRadius / 2 <= 0 + ballRadius / 2){
+  // eslint-disable-next-line max-len
+  if (ballX + ballRadius / 2 >= WIDTH - ballRadius / 2 || ballX - ballRadius / 2 <= 0 + ballRadius / 2) {
     ballXSpeed *= -1;
   }
-  if (ballY - ballRadius / 2 <= 0 + ballRadius / 2){
+  if (ballY - ballRadius / 2 <= 0 + ballRadius / 2) {
     ballYSpeed *= -1;
   } else if (ballY + ballRadius / 2 >= HEIGHT - ballRadius / 2) {
     if (ballX > paddleX && ballX < paddleX + paddleWidth) {
       ballYSpeed *= -1;
+    } else if (lives === 0) {
+      // eslint-disable-next-line no-alert
+      alert('GAME OVER');
+      document.location.reload();
+      cancelAnimationFrame();
     } else {
-      if (lives == 0) {
-        alert('GAME OVER');
-        document.location.reload();
-        cancelAnimationFrame();
-      } else {
-        ballX = WIDTH / 2;
-        ballY = HEIGHT - 55;
-        ballXSpeed = 3.5 + Math.random() - 0.5;
-        ballYSpeed = -3.5 + Math.random() - 0.5;
-        lives --;
-      }
+      ballX = WIDTH / 2;
+      ballY = HEIGHT - 55;
+      ballXSpeed = 3.5 + Math.random() - 0.5;
+      ballYSpeed = -3.5 + Math.random() - 0.5;
+      lives -= 1;
     }
   }
   ballX += ballXSpeed;
@@ -117,9 +117,9 @@ const paddleLogic = () => {
  * @param event
  */
 const keyDownHandler = (event) => {
-  if (event.key == 'Right' || event.key == 'ArrowRight') {
+  if (event.key === 'Right' || event.key === 'ArrowRight') {
     rightPressed = true;
-  } else if (event.key == 'Left' || event.key == 'ArrowLeft') {
+  } else if (event.key === 'Left' || event.key === 'ArrowLeft') {
     leftPressed = true;
   }
 };
@@ -129,9 +129,9 @@ const keyDownHandler = (event) => {
  * @param event
  */
 const keyUpHandler = (event) => {
-  if (event.key == 'Right' || event.key == 'ArrowRight') {
+  if (event.key === 'Right' || event.key === 'ArrowRight') {
     rightPressed = false;
-  } else if (event.key == 'Left' || event.key == 'ArrowLeft') {
+  } else if (event.key === 'Left' || event.key === 'ArrowLeft') {
     leftPressed = false;
   }
 };
@@ -140,7 +140,7 @@ const keyUpHandler = (event) => {
  * Handles when the mouse is moved
  */
 const mouseMoveHandler = (event) => {
-  let mouseX = event.clientX - canvas.offsetLeft;
+  const mouseX = event.clientX - canvas.offsetLeft;
   if (mouseX > 0 && mouseX < WIDTH) {
     paddleX = mouseX - paddleWidth / 2;
     paddleColor = `rgb(${paddleX * (255 / WIDTH)}, 0, 0)`;
