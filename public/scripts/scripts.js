@@ -46,6 +46,24 @@ class Paddle {
   }
 }
 
+class Brick {
+  constructor(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.isVisible = true;
+  }
+
+  draw(color) {
+    ctx.beginPath();
+    ctx.rect(this.x, this.y, this.width, this.height);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.closePath();
+  }
+}
+
 // eslint-disable-next-line max-len
 const ball = new Ball(WIDTH / 2, HEIGHT - 55, 3.5 + Math.random() - 0.5, -3.5 + Math.random() - 0.5);
 
@@ -59,7 +77,7 @@ const brickHeight = 20;
 const brickPadding = 10;
 const brickOffsetTop = 30;
 const brickOffsetLeft = 30;
-let brickInitalRed = 255 / brickColumnCount;
+let brickColor = 255 / brickColumnCount;
 
 // Keyboard Variables
 let rightPressed = false;
@@ -168,13 +186,9 @@ const populateBricks = () => {
   for (let i = 0; i < brickColumnCount; i += 1) {
     bricks[i] = [];
     for (let j = 0; j < brickRowCount; j += 1) {
-      const brickX = (i * (brickWidth + brickPadding)) + brickOffsetLeft;
-      const brickY = (j * (brickHeight + brickPadding)) + brickOffsetTop;
-      bricks[i][j] = {
-        x: brickX,
-        y: brickY,
-        isVisible: true,
-      };
+      const x = (i * (brickWidth + brickPadding)) + brickOffsetLeft;
+      const y = (j * (brickHeight + brickPadding)) + brickOffsetTop;
+      bricks[i][j] = new Brick(x, y, brickWidth, brickHeight);
     }
   }
   return bricks;
@@ -188,16 +202,12 @@ const drawBricks = () => {
   for (let i = 0; i < brickColumnCount; i += 1) {
     for (let j = 0; j < brickRowCount; j += 1) {
       if (bricks[i][j].isVisible) {
-        ctx.beginPath();
-        ctx.rect(bricks[i][j].x, bricks[i][j].y, brickWidth, brickHeight);
-        ctx.fillStyle = `rgb(${brickInitalRed}, 0, 0)`;
-        ctx.fill();
-        ctx.closePath();
+        bricks[i][j].draw(`rgb(${brickColor}, 0, 0)`);
       }
     }
-    brickInitalRed += 255 / brickColumnCount;
+    brickColor += 255 / brickColumnCount;
   }
-  brickInitalRed = 255 / brickColumnCount;
+  brickColor = 255 / brickColumnCount;
 };
 
 /**
@@ -225,9 +235,6 @@ const collisionDetection = () => {
   }
 };
 
-/**
- * Draw score on canvas
- */
 const drawScore = () => {
   ctx.font = '16px Ariel';
   ctx.fillStyle = textColor;
@@ -240,12 +247,10 @@ const drawLives = () => {
   ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 20);
 };
 
-/**
- * Runs every 10 Miliseconds
- */
 const draw = () => {
+  // Clear Canvas
   clearCanvas();
-  // Draw
+  // Draw Objects
   ball.draw();
   paddle.draw();
   drawBricks();
