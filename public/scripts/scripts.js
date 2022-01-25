@@ -1,24 +1,55 @@
+/* eslint-disable max-classes-per-file */
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
 const WIDTH = canvas.width;
 const HEIGHT = canvas.height;
 
-// Ball Variables
-let ballX = WIDTH / 2;
-let ballY = HEIGHT - 55;
-const ballRadius = 15;
-let ballXSpeed = 3.5 + Math.random() - 0.5;
-let ballYSpeed = -3.5 + Math.random() - 0.5;
-const ballColor = '#000000';
+class Ball {
+  constructor(x, y, xSpeed, ySpeed) {
+    this.x = x;
+    this.y = y;
+    this.radius = 15;
+    this.xSpeed = xSpeed;
+    this.ySpeed = ySpeed;
+    this.color = '#000000';
+  }
 
-// Paddle Variables
-const paddleHeight = 10;
-const paddleWidth = 75;
-let paddleX = (WIDTH - paddleWidth) / 2;
-const paddleY = HEIGHT - paddleHeight;
-const paddleSpeed = 7;
-let paddleColor = `rgb(${paddleX * (255 / WIDTH)}, 0, 0)`;
+  /**
+  * Draws the ball on the canvas
+  */
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.closePath();
+  }
+}
+
+class Paddle {
+  constructor(x, y, width, height, speed) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.speed = speed;
+    this.color = `rgb(${x * (255 / WIDTH)}, 0, 0)`;
+  }
+
+  draw() {
+    ctx.beginPath();
+    ctx.rect(this.x, this.y, this.width, this.height);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.closePath();
+  }
+}
+
+// eslint-disable-next-line max-len
+const ball = new Ball(WIDTH / 2, HEIGHT - 55, 3.5 + Math.random() - 0.5, -3.5 + Math.random() - 0.5);
+
+const paddle = new Paddle((WIDTH - 75) / 2, HEIGHT - 10, 75, 10, 7);
 
 // Brick Variables
 const brickRowCount = 3;
@@ -50,55 +81,33 @@ const clearCanvas = () => {
 };
 
 /**
- * Draws the ball on the canvas
- */
-const drawBall = () => {
-  ctx.beginPath();
-  ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
-  ctx.fillStyle = ballColor;
-  ctx.fill();
-  ctx.closePath();
-};
-
-/**
  * All ball logic
  */
 const ballLogic = () => {
   // eslint-disable-next-line max-len
-  if (ballX + ballRadius / 2 >= WIDTH - ballRadius / 2 || ballX - ballRadius / 2 <= 0 + ballRadius / 2) {
-    ballXSpeed *= -1;
+  if (ball.x + ball.radius / 2 >= WIDTH - ball.radius / 2 || ball.x - ball.radius / 2 <= 0 + ball.radius / 2) {
+    ball.xSpeed *= -1;
   }
-  if (ballY - ballRadius / 2 <= 0 + ballRadius / 2) {
-    ballYSpeed *= -1;
-  } else if (ballY + ballRadius / 2 >= HEIGHT - ballRadius / 2) {
-    if (ballX > paddleX && ballX < paddleX + paddleWidth) {
-      ballYSpeed *= -1;
+  if (ball.y - ball.radius / 2 <= 0 + ball.radius / 2) {
+    ball.ySpeed *= -1;
+  } else if (ball.y + ball.radius / 2 >= HEIGHT - ball.radius / 2) {
+    if (ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
+      ball.ySpeed *= -1;
     } else if (lives === 0) {
       // eslint-disable-next-line no-alert
       alert('GAME OVER');
       document.location.reload();
       cancelAnimationFrame();
     } else {
-      ballX = WIDTH / 2;
-      ballY = HEIGHT - 55;
-      ballXSpeed = 3.5 + Math.random() - 0.5;
-      ballYSpeed = -3.5 + Math.random() - 0.5;
+      ball.x = WIDTH / 2;
+      ball.y = HEIGHT - 55;
+      ball.xSpeed = 3.5 + Math.random() - 0.5;
+      ball.ySpeed = -3.5 + Math.random() - 0.5;
       lives -= 1;
     }
   }
-  ballX += ballXSpeed;
-  ballY += ballYSpeed;
-};
-
-/**
- * Draw Paddle
- */
-const drawPaddle = () => {
-  ctx.beginPath();
-  ctx.rect(paddleX, paddleY, paddleWidth, paddleHeight);
-  ctx.fillStyle = paddleColor;
-  ctx.fill();
-  ctx.closePath();
+  ball.x += ball.xSpeed;
+  ball.y += ball.ySpeed;
 };
 
 /**
@@ -142,8 +151,8 @@ const keyUpHandler = (event) => {
 const mouseMoveHandler = (event) => {
   const mouseX = event.clientX - canvas.offsetLeft;
   if (mouseX > 0 && mouseX < WIDTH) {
-    paddleX = mouseX - paddleWidth / 2;
-    paddleColor = `rgb(${paddleX * (255 / WIDTH)}, 0, 0)`;
+    paddle.x = mouseX - paddle.width / 2;
+    paddle.color = `rgb(${paddle.x * (255 / WIDTH)}, 0, 0)`;
   }
 };
 
@@ -200,8 +209,8 @@ const collisionDetection = () => {
       const brick = bricks[i][j];
       if (brick.isVisible) {
         // eslint-disable-next-line max-len
-        if (ballX > brick.x && ballX < brick.x + brickWidth && ballY > brick.y && ballY < brick.y + brickHeight) {
-          ballYSpeed *= -1;
+        if (ball.x > brick.x && ball.x < brick.x + brickWidth && ball.y > brick.y && ball.y < brick.y + brickHeight) {
+          ball.ySpeed *= -1;
           bricks[i][j].isVisible = false;
           score += scorePerBrick;
           if (score === brickColumnCount * brickRowCount) {
@@ -237,8 +246,8 @@ const drawLives = () => {
 const draw = () => {
   clearCanvas();
   // Draw
-  drawBall();
-  drawPaddle();
+  ball.draw();
+  paddle.draw();
   drawBricks();
   drawScore();
   drawLives();
