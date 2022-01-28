@@ -1,73 +1,22 @@
+/* eslint-disable import/extensions */
 /* eslint-disable max-classes-per-file */
+import Ball from './Ball.js';
+import Paddle from './Paddle.js';
+import Brick from './Brick.js';
+import Background from './Background.js';
+import Score from './Score.js';
+import Lives from './Lives.js';
+
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
 const WIDTH = canvas.width;
 const HEIGHT = canvas.height;
 
-class Ball {
-  constructor(x, y, xSpeed, ySpeed) {
-    this.x = x;
-    this.y = y;
-    this.radius = 15;
-    this.xSpeed = xSpeed;
-    this.ySpeed = ySpeed;
-    this.color = '#000000';
-  }
-
-  /**
-  * Draws the ball on the canvas
-  */
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-    ctx.closePath();
-  }
-}
-
-class Paddle {
-  constructor(x, y, width, height, speed) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.speed = speed;
-    this.color = `rgb(${x * (255 / WIDTH)}, 0, 0)`;
-  }
-
-  draw() {
-    ctx.beginPath();
-    ctx.rect(this.x, this.y, this.width, this.height);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-    ctx.closePath();
-  }
-}
-
-class Brick {
-  constructor(x, y, width, height) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.isVisible = true;
-  }
-
-  draw(color) {
-    ctx.beginPath();
-    ctx.rect(this.x, this.y, this.width, this.height);
-    ctx.fillStyle = color;
-    ctx.fill();
-    ctx.closePath();
-  }
-}
-
 // eslint-disable-next-line max-len
 const ball = new Ball(WIDTH / 2, HEIGHT - 55, 3.5 + Math.random() - 0.5, -3.5 + Math.random() - 0.5);
-
-const paddle = new Paddle((WIDTH - 75) / 2, HEIGHT - 10, 75, 10, 7);
+const paddle = new Paddle((WIDTH - 75) / 2, HEIGHT - 10, 75, 10, 7, `rgb(${((WIDTH - 75) / 2) * (255 / WIDTH)}, 0, 0)`);
+const background = new Background(WIDTH, HEIGHT, '#cdcdcd');
 
 // Brick Variables
 const brickRowCount = 3;
@@ -84,19 +33,10 @@ let rightPressed = false;
 let leftPressed = false;
 
 // Game Variables
-const textColor = '#000000';
-let score = 0;
 const scorePerBrick = 1;
-let lives = 2;
+const score = new Score(8, 20);
+const lives = new Lives(WIDTH - 65, 20, 2);
 const fps = 80;
-window.addEventListener('blur', cancelAnimationFrame);
-
-/**
- * Clears the canvas
- */
-const clearCanvas = () => {
-  ctx.clearRect(0, 0, WIDTH, HEIGHT);
-};
 
 /**
  * All ball logic
@@ -111,7 +51,7 @@ const ballLogic = () => {
   } else if (ball.y + ball.radius / 2 >= HEIGHT - ball.radius / 2) {
     if (ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
       ball.ySpeed *= -1;
-    } else if (lives === 0) {
+    } else if (lives.lives === 0) {
       // eslint-disable-next-line no-alert
       alert('GAME OVER');
       document.location.reload();
@@ -121,7 +61,7 @@ const ballLogic = () => {
       ball.y = HEIGHT - 55;
       ball.xSpeed = 3.5 + Math.random() - 0.5;
       ball.ySpeed = -3.5 + Math.random() - 0.5;
-      lives -= 1;
+      lives.decrement(1);
     }
   }
   ball.x += ball.xSpeed;
@@ -132,10 +72,10 @@ const ballLogic = () => {
  * All paddle logic
  */
 const paddleLogic = () => {
-  if (rightPressed && !(paddleX + paddleWidth / 2 > WIDTH - paddleWidth / 2)) {
-    paddleX += paddleSpeed;
-  } else if (leftPressed && !(paddleX < 0)) {
-    paddleX -= paddleSpeed;
+  if (rightPressed && !(paddle.x + paddle.width / 2 > WIDTH - paddle.width / 2)) {
+    paddle.x += paddle.speed;
+  } else if (leftPressed && !(paddle.x < 0)) {
+    paddle.x -= paddle.speed;
   }
 };
 
@@ -174,10 +114,6 @@ const mouseMoveHandler = (event) => {
   }
 };
 
-document.addEventListener('keydown', keyDownHandler);
-document.addEventListener('keyup', keyUpHandler);
-document.addEventListener('mousemove', mouseMoveHandler);
-
 /**
  * Populate bricks list with bricks
  */
@@ -202,7 +138,7 @@ const drawBricks = () => {
   for (let i = 0; i < brickColumnCount; i += 1) {
     for (let j = 0; j < brickRowCount; j += 1) {
       if (bricks[i][j].isVisible) {
-        bricks[i][j].draw(`rgb(${brickColor}, 0, 0)`);
+        bricks[i][j].draw(ctx, `rgb(${brickColor}, 0, 0)`);
       }
     }
     brickColor += 255 / brickColumnCount;
@@ -222,9 +158,8 @@ const collisionDetection = () => {
         if (ball.x > brick.x && ball.x < brick.x + brickWidth && ball.y > brick.y && ball.y < brick.y + brickHeight) {
           ball.ySpeed *= -1;
           bricks[i][j].isVisible = false;
-          score += scorePerBrick;
-          if (score === brickColumnCount * brickRowCount) {
-            clearCanvas();
+          score.increment(scorePerBrick);
+          if (score.score === brickColumnCount * brickRowCount) {
             // eslint-disable-next-line no-alert
             alert('You win, congrats!');
             document.location.reload();
@@ -235,27 +170,14 @@ const collisionDetection = () => {
   }
 };
 
-const drawScore = () => {
-  ctx.font = '16px Ariel';
-  ctx.fillStyle = textColor;
-  ctx.fillText(`Score: ${score}`, 8, 20);
-};
-
-const drawLives = () => {
-  ctx.font = '16px Ariel';
-  ctx.fillStyle = textColor;
-  ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 20);
-};
-
 const draw = () => {
-  // Clear Canvas
-  clearCanvas();
+  background.draw(ctx);
   // Draw Objects
-  ball.draw();
-  paddle.draw();
+  ball.draw(ctx);
+  paddle.draw(ctx);
   drawBricks();
-  drawScore();
-  drawLives();
+  score.draw(ctx);
+  lives.draw(ctx);
   // Logic
   ballLogic();
   paddleLogic();
@@ -266,4 +188,7 @@ const draw = () => {
   }, 1000 / fps);
 };
 
+document.addEventListener('keydown', keyDownHandler);
+document.addEventListener('keyup', keyUpHandler);
+document.addEventListener('mousemove', mouseMoveHandler);
 draw();
