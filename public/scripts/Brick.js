@@ -1,9 +1,9 @@
-class Brick {
+// eslint-disable-next-line import/extensions
+import Sprite from './Sprite.js';
+
+class Brick extends Sprite {
   constructor(x, y, width, height) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
+    super(x, y, width, height);
     this.isVisible = true;
   }
 
